@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-pink-400 to-red-500 flex items-center justify-center h-screen font-poppins overflow-hidden">
+
+    <!-- Animated Background -->
+    <div class="absolute top-0 left-0 w-full h-full bg-heart-pattern bg-cover opacity-10 pointer-events-none animate-float"></div>
+
+    <!-- Main Card -->
+    <div class="bg-white/90 backdrop-blur-md shadow-2xl rounded-3xl p-8 text-center w-96 relative overflow-hidden transform transition-all duration-500 hover:scale-105">
+        <h1 class="text-3xl font-great-vibes text-red-600 animate-bounce">💖 เลือกตัวเลือกกก 💖</h1>
+        <p class="text-gray-700 mt-2 text-sm">ตอบคำถามเพื่อหากิจกรรมที่เหมาะกับคุณ! 🌹</p>
+
+        <!-- คำถาม 1 -->
+        <div id="question1" class="question-screen">
+            <label class="block font-semibold text-gray-800 mt-4 text-lg">ชอบแนวไหน?</label>
+            <button class="option-btn" onclick="nextQuestion(1, 'romantic')">💕 โรแมนติก</button>
+            <button class="option-btn" onclick="nextQuestion(1, 'fun')">😆 สนุกสนาน</button>
+            <button class="option-btn" onclick="nextQuestion(1, 'relax')">😌 ผ่อนคลาย</button>
+        </div>
+
+        <!-- คำถาม 2 -->
+        <div id="question2" class="question-screen hidden">
+            <label class="block font-semibold text-gray-800 mt-4 text-lg">ชอบแบบไหน?</label>
+            <button class="option-btn" onclick="nextQuestion(2, 'home')">🏡 ที่บ้าน</button>
+            <button class="option-btn" onclick="nextQuestion(2, 'outside')">🌆 ข้างนอก</button>
+        </div>
+
+        <!-- คำถาม 3 -->
+        <div id="question3" class="question-screen hidden">
+            <label class="block font-semibold text-gray-800 mt-4 text-lg">อยากได้ของขวัญแบบไหน?</label>
+            <button class="option-btn" onclick="showResult('ช่อดอกไม้')">💐 ช่อดอกไม้</button>
+            <button class="option-btn" onclick="showResult('ช็อกโกแลต')">🍫 ช็อกโกแลต</button>
+            <button class="option-btn" onclick="showResult('ของ handmade')">🎨 รูปภาพ</button>
+        </div>
+
+        <!-- ผลลัพธ์ -->
+        <div id="result" class="hidden bg-red-100/90 backdrop-blur-sm rounded-2xl p-6 mt-4">
+            <p class="text-lg font-semibold text-red-800">💑 กิจกรรม:</p>
+            <p id="activity" class="text-2xl font-great-vibes text-red-600 mt-2">
+                <!-- กิจกรรมจะถูกเพิ่มที่นี่โดย JavaScript -->
+            </p>
+            <p id="additional-activity" class="text-2xl font-great-vibes text-red-600 mt-2">
+                <!-- กิจกรรมเสริมจะถูกเพิ่มที่นี่โดย JavaScript -->
+            </p>
+            <p class="text-sm text-gray-600 mt-4">ของขวัญที่คุณอยากได้: <span id="gift" class="font-semibold"></span></p>
+            <p class="text-sm text-gray-600 mt-4 italic">อย่าลืมแคปรูปไว้เป็นหลักฐานนะ! 📸</p>
+        </div>
+    </div>
+
+    <!-- Confetti Effect -->
+    <canvas id="confetti" class="absolute top-0 left-0 w-full h-full pointer-events-none"></canvas>
+
+    <script>
+        let userChoices = {};
+
+
+        // กิจกรรมสำหรับ "ที่บ้าน"
+        const homeActivities = [
+            "ทำกับข้าว",
+            "ไปกินโมโม่",
+            "ไปกินซูชิ",
+            "ไปนวด",
+            "ไปกินพิซซ่า",
+            "ไปกินบอนชอน",
+            "ไปกินส้มตำ",
+            "ไปกินหมูทะ",
+            "ไปกินชาบูชิ",
+            "ไปกินโอโตยะ",
+            "ไปกินคัทซิชะ",
+            "ไปกินอีซี่บัดดี้",
+            "ไปกินซานตาเฟ่ป",
+            "ไปกินบูญตงกี่",
+            "ไปกินโคโค่",
+            "ไปกินบาบีีก้อน",
+            "ไปกินสุกี้",
+            "ไปกินตี๋น้อย",
+            "ไปดูหนัง",
+            "ไปกินอีเกีย",
+            "ไปกินยูแอนไอ",
+            "ไปกินเนื้อย่าง",
+            "ไปกินอากะ",
+            "ไปกินไฮตี้เหลา",
+            "ไปกินโคตรทะเล",
+        ];
+
+        // กิจกรรมสำหรับ "ข้างนอก"
+        const outsideActivities = [
+            "ไปกินโมโม่",
+            "ไปกินซูชิ",
+            "ไปนวด",
+            "ไปกินพิซซ่า",
+            "ไปกินบอนชอน",
+            "ไปกินส้มตำ",
+            "ไปกินหมูทะ",
+            "ไปกินชาบูชิ",
+            "ไปกินโอโตยะ",
+            "ไปกินคัทซิชะ",
+            "ไปกินอีซี่บัดดี้",
+            "ไปกินซานตาเฟ่ป",
+            "ไปกินบูญตงกี่",
+            "ไปกินโคโค่",
+            "ไปกินบาบีีก้อน",
+            "ไปกินสุกี้",
+            "ไปกินตี๋น้อย",
+            "ไปดูหนัง",
+            "ไปกินอีเกีย",
+            "ไปกินยูแอนไอ",
+            "ไปกินเนื้อย่าง",
+            "ไปกินอากะ",
+            "ไปกินไฮตี้เหลา",
+            "ไปกินโคตรทะเล",
+        ];
+
+
+        // กิจกรรมเสริม (ของหวานหรือกิจกรรมอื่นๆ)
+        const additionalActivities = [
+        "แล้วไปกินชาตรามือ",
+        "แล้วไปกินคามุ",
+        "แล้วไปกินเครป",
+        "แล้วไปกินเค้ก",
+        "แล้วไปกินอันตี้แอน",
+        "แล้วไปกินขนมอีเกีย",
+        "แล้วไปกินกาก้า",
+        "แล้วไปกินสเวนเซ่น",
+        "แล้วไปกินแดรี่ควีน",
+        "แล้วไปกินคริสปีครีม",
+        "แล้วไปกินหยกสด",
+        "แล้วไปกินโปเตโต้คอนเนอ",
+        "แล้วไปกินการัน",
+        "แล้วไปกินอาฟเตอร์ยู",
+        "แล้วไปกินชีวิตชีวา",
+        ];
+
+        function nextQuestion(current, answer) {
+            userChoices[`q${current}`] = answer;
+            const currentQuestion = document.getElementById(`question${current}`);
+            const nextQuestion = document.getElementById(`question${current + 1}`);
+
+            // ซ่อนคำถามปัจจุบัน
+            currentQuestion.classList.add("fade-out");
+            setTimeout(() => {
+                currentQuestion.classList.add("hidden");
+                currentQuestion.classList.remove("fade-out");
+
+                // แสดงคำถามถัดไป
+                nextQuestion.classList.remove("hidden");
+                nextQuestion.classList.add("fade-in");
+            }, 300); // รอให้ fade-out เสร็จสิ้น
+        }
+
+        function showResult(gift) {
+            userChoices.q3 = gift;
+
+            // สุ่มกิจกรรม 3 ตัวเลือก
+            const activityElement = document.getElementById("activity");
+            let activities = [];
+            if (userChoices.q2 === "home") {
+                activities = getRandomActivities(homeActivities, 3);
+            } else if (userChoices.q2 === "outside") {
+                activities = getRandomActivities(outsideActivities, 3);
+            }
+
+            // แสดงกิจกรรม 3 ตัวเลือกพร้อมคำว่า "หรือ"
+            activityElement.innerHTML = activities.join(" หรือ ");
+
+            // สุ่มกิจกรรมเสริม
+            const additionalActivityElement = document.getElementById("additional-activity");
+            const randomAdditionalActivity = additionalActivities[Math.floor(Math.random() * additionalActivities.length)];
+            additionalActivityElement.innerHTML = randomAdditionalActivity;
+
+            // แสดงของขวัญ
+            document.getElementById("gift").innerText = gift;
+
+            const question3 = document.getElementById("question3");
+            const result = document.getElementById("result");
+
+            // ซ่อนคำถาม 3
+            question3.classList.add("fade-out");
+            setTimeout(() => {
+                question3.classList.add("hidden");
+                question3.classList.remove("fade-out");
+
+                // แสดงผลลัพธ์
+                result.classList.remove("hidden");
+                result.classList.add("fade-in");
+            }, 300);
+
+            // Trigger confetti
+            triggerConfetti();
+        }
+
+        // สุ่มกิจกรรมไม่ซ้ำ
+        function getRandomActivities(array, count) {
+            const shuffled = array.sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+
+        // Confetti Effect
+        function triggerConfetti() {
+            const canvas = document.getElementById("confetti");
+            const ctx = canvas.getContext("2d");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let particles = [];
+            const particleCount = 200;
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 5 + 2,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    velocity: {
+                        x: (Math.random() - 0.5) * 10,
+                        y: (Math.random() - 0.5) * 10,
+                    },
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((particle) => {
+                    ctx.beginPath();
+                    ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = particle.color;
+                    ctx.fill();
+                    ctx.closePath();
+
+                    particle.x += particle.velocity.x;
+                    particle.y += particle.velocity.y;
+
+                    if (particle.y > canvas.height) {
+                        particle.y = 0;
+                    }
+                    if (particle.x > canvas.width || particle.x < 0) {
+                        particle.velocity.x *= -1;
+                    }
+                });
+
+                requestAnimationFrame(draw);
+            }
+
+            draw();
+        }
+    </script>
+
+    <style>
+        .font-great-vibes {
+            font-family: 'Great Vibes', cursive;
+        }
+
+        .font-poppins {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .bg-heart-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff0000'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 12px;
+            background-color: #f87171;
+            color: white;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .option-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .fade-out {
+            animation: fadeOut 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Animated Background */
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .animate-float {
+            animation: float 10s ease-in-out infinite;
+        }
+    </style>
+</body>
+</html>
